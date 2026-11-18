@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrainRadar24</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#091525;color:white;font-family:Arial}
+header{background:#122944;padding:22px}
+.logo{font-size:27px;font-weight:bold}
+.logo span{color:#35a4ff}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{background:#1678d3;color:white;border:0;padding:12px;border-radius:7px;cursor:pointer}
+main{max-width:1000px;margin:auto;padding:18px}
+.hero,.panel{background:#142941;padding:20px;border-radius:12px;margin-bottom:18px}
+input{width:100%;padding:14px;background:#091525;color:white;border:1px solid #42617e;border-radius:7px;margin:10px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{background:#1c3653;padding:17px;border-radius:10px}
+.card h3{margin-top:8px}
+.tag{color:#64b8ff;font-size:13px}
+small,.muted{color:#a9bdd2}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:12px 7px;border-bottom:1px solid #38516b}
+.hidden{display:none}
+footer{text-align:center;padding:25px;color:#9eb0c3}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🚆 Train<span>Radar24</span></div>
+<p>Die Welt der Eisenbahn auf einen Blick</p>
+<nav>
+<button onclick="page('start')">Startseite</button>
+<button onclick="page('modelle')">Zugmodelle</button>
+<button onclick="page('bahnhof')">Bahnhöfe</button>
+<button onclick="page('fahrplan')">Fahrplan</button>
+</nav>
+</header>
+
+<main>
+
+<section id="start">
+<div class="hero">
+<h1>Zugauskunft</h1>
+<p>Suche nach Zugnummern, Linien und Baureihen.</p>
+<input id="suche" placeholder="Zug oder Baureihe eingeben...">
+<button onclick="suchen()">Suchen</button>
+<div id="ergebnis"></div>
+</div>
+
+<div class="panel">
+<h2>TrainRadar24</h2>
+<div class="cards">
+<div class="card"><h2>🚆</h2><b>Zugmodelle</b><p>Entdecke verschiedene Baureihen.</p></div>
+<div class="card"><h2>🚉</h2><b>Bahnhöfe</b><p>Finde interessante Bahnhöfe.</p></div>
+<div class="card"><h2>🕒</h2><b>Fahrplan</b><p>Beispielhafte Abfahrten ansehen.</p></div>
+</div>
+</div>
+</section>
+
+<section id="modelle" class="hidden">
+<h1>Zugmodelle</h1>
+<input id="modellSuche" oninput="modelleAnzeigen()" placeholder="Baureihe suchen...">
+<div id="modelleListe" class="cards"></div>
+</section>
+
+<section id="bahnhof" class="hidden">
+<h1>Bahnhöfe</h1>
+<div class="cards">
+<div class="card">🚉 <b>München Hbf</b><p>Hauptbahnhof</p></div>
+<div class="card">🚉 <b>München Ost</b><p>Regional- und Fernverkehr</p></div>
+<div class="card">🚉 <b>Holzkirchen</b><p>Bahnhof</p></div>
+<div class="card">🚉 <b>Höhenkirchen-Siegertsbrunn</b><p>S-Bahn-Station</p></div>
+<div class="card">🚉 <b>München Flughafen</b><p>Flughafenbahnhof</p></div>
+</div>
+</section>
+
+<section id="fahrplan" class="hidden">
+<h1>Abfahrtstafel</h1>
+<div class="panel" style="overflow-x:auto">
+<table>
+<thead><tr><th>Zeit</th><th>Zug</th><th>Ziel</th><th>Modell</th></tr></thead>
+<tbody id="fahrten"></tbody>
+</table>
+</div>
+<p class="muted">Beispieldaten – keine Live-Abfahrten.</p>
+</section>
+
+</main>
+
+<footer>
+TrainRadar24 · Version 1.0
+<p>Deine digitale Zugplattform</p>
+</footer>
+
+<script>
+const zuege=[
+{nr:"420",name:"DB Baureihe 420",typ:"S-Bahn",ort:"München"},
+{nr:"423",name:"DB Baureihe 423",typ:"S-Bahn",ort:"München"},
+{nr:"430",name:"DB Baureihe 430",typ:"S-Bahn",ort:"Stuttgart / Rhein-Main"},
+{nr:"412",name:"ICE 4",typ:"Fernverkehr",ort:"Deutschland"},
+{nr:"403",name:"ICE 3",typ:"Fernverkehr",ort:"Deutschland"},
+{nr:"401",name:"ICE 1",typ:"Fernverkehr",ort:"Deutschland"},
+{nr:"442",name:"Talent 2",typ:"Regionalverkehr",ort:"Deutschland"},
+{nr:"1440",name:"Coradia Continental",typ:"Regionalverkehr",ort:"Deutschland"},
+{nr:"146",name:"TRAXX Lokomotive",typ:"Lokomotive",ort:"Deutschland"},
+{nr:"193",name:"Vectron",typ:"Lokomotive",ort:"Europa"}
+];
+
+function page(id){
+["start","modelle","bahnhof","fahrplan"].forEach(x=>{
+document.getElementById(x).classList.add("hidden");
+});
+document.getElementById(id).classList.remove("hidden");
+if(id==="modelle")modelleAnzeigen();
+}
+
+function suchen(){
+let q=document.getElementById("suche").value.toLowerCase().trim();
+let r=document.getElementById("ergebnis");
+if(!q){r.innerHTML="<p>Bitte Suchbegriff eingeben.</p>";return;}
+let treffer=zuege.filter(z=>
+(z.nr+" "+z.name+" "+z.typ+" "+z.ort).toLowerCase().includes(q)
+);
+r.innerHTML=treffer.length?treffer.map(z=>
+`<div class="card"><h3>${z.name}</h3><p>${z.typ}</p><p>${z.ort}</p></div>`
+).join(""):"<p>Kein Zug gefunden.</p>";
+}
+
+function modelleAnzeigen(){
+let q=document.getElementById("modellSuche").value.toLowerCase();
+let liste=document.getElementById("modelleListe");
+let treffer=zuege.filter(z=>(z.nr+" "+z.name+" "+z.typ).toLowerCase().includes(q));
+liste.innerHTML=treffer.map(z=>
+`<div class="card">
+<span class="tag">${z.typ}</span>
+<h3>${z.name}</h3>
+<p>Baureihe: ${z.nr}</p>
+<p>Einsatzgebiet: ${z.ort}</p>
+</div>`
+).join("");
+}
+
+const fahrten=[
+["08:12","S5","Ebersberg","BR 423"],
+["08:22","S3","Holzkirchen","BR 423"],
+["08:32","RE 5","Salzburg","Doppelstockzug"],
+["08:42","ICE 596","München Hbf","ICE 4"],
+["08:52","S5","Höhenkirchen-Siegertsbrunn","BR 423"]
+];
+
+document.getElementById("fahrten").innerHTML=fahrten.map(f=>
+`<tr><td>${f[0]}</td><td>${f[1]}</td><td>${f[2]}</td><td>${f[3]}</td></tr>`
+).join("");
+
+</script>
+</body>
+</html>
