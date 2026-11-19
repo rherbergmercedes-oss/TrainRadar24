@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="de">
 async function searchStations(inputId, resultId) {
   const query = document.getElementById(inputId).value.trim();
@@ -13,66 +13,4 @@ async function searchStations(inputId, resultId) {
 
   const where =
     "Name LIKE '%" + query.replace(/'/g, "''") +
-    "%' AND (Verkehrsm LIKE '%Bahn%' OR Verkehrsm LIKE '%Zug%')";
-
-  const params = new URLSearchParams({
-    where: where,
-    outFields: "Name,Verkehrsm,Art,Gemeinde,Bundesland,Stop_ID",
-    returnGeometry: "false",
-    resultRecordCount: "100",
-    orderByFields: "Name ASC",
-    f: "json"
-  });
-
-  const url =
-    "https://services2.arcgis.com/jUpNdisbWqRpMo35/ArcGIS/rest/services/Haltestelledaten_DELFI/FeatureServer/0/query?" +
-    params.toString();
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error("Datenquelle nicht erreichbar");
-    }
-
-    const data = await response.json();
-
-    if (data.error) {
-      throw new Error(data.error.message);
-    }
-
-    const results = data.features || [];
-
-    const unique = [...new Map(
-      results.map(item => [
-        item.attributes.Name,
-        item.attributes
-      ])
-    ).values()];
-
-    if (unique.length === 0) {
-      area.innerHTML =
-        '<p class="empty">Kein passender Bahnhof gefunden.</p>';
-      return;
-    }
-
-    area.innerHTML = unique.map(item => `
-      <div class="card">
-        <div class="station-name">${item.Name}</div>
-        <div class="small">
-          ${item.Gemeinde || ""} 
-          ${item.Bundesland || ""}
-        </div>
-        <div class="small">${item.Verkehrsm || "Bahnverkehr"}</div>
-        <button class="action"
-          onclick="openStation('${String(item.Name).replace(/'/g, "\\'")}')">
-          Bahnhof öffnen
-        </button>
-      </div>
-    `).join("");
-
-  } catch (error) {
-    area.innerHTML =
-      '<p class="empty">Die Bahnhofsdaten konnten gerade nicht geladen werden. Bitte später erneut versuchen.</p>';
-  }
-}
+    "%' AND (Verkehrsm LI
