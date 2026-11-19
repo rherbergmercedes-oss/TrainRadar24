@@ -474,7 +474,9 @@ async function searchStations() {
 
       const button = document.createElement("button");
       button.textContent = "Öffnen";
-      button.onclick = () => openStation(id, name);
+      button.addEventListener("click", function() {
+  openStation(id, name);
+});
 
       item.append(info, button);
       results.appendChild(item);
