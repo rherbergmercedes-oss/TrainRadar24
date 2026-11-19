@@ -1,207 +1,212 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrainRadar24</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrainRadar24</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101827;
-      color: white;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    header {
-      background: #17263b;
-      padding: 22px;
-      text-align: center;
-      border-bottom: 3px solid #36a3ff;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef2f7;
+  color: #172033;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
+header {
+  background: #092b50;
+  color: white;
+  padding: 22px 16px;
+  text-align: center;
+}
 
-    header p {
-      color: #b9c9dc;
-      margin-bottom: 0;
-    }
+header h1 {
+  margin: 0;
+  font-size: 29px;
+}
 
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px;
-      background: #0b1320;
-    }
+header p {
+  margin-bottom: 0;
+  color: #c9d9ed;
+}
 
-    nav button {
-      background: #263b56;
-      color: white;
-      border: 0;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 15px;
-    }
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #123d68;
+  gap: 5px;
+  padding: 10px;
+}
 
-    nav button.active {
-      background: #1689ed;
-    }
+nav button {
+  background: transparent;
+  color: white;
+  border: 0;
+  padding: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 7px;
+}
 
-    main {
-      max-width: 850px;
-      margin: auto;
-      padding: 20px;
-    }
+nav button.active,
+nav button:hover {
+  background: #28649d;
+}
 
-    .panel {
-      background: #1b2a40;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-    }
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 18px;
+}
 
-    h2 {
-      margin-top: 0;
-    }
+section {
+  display: none;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 8px;
-      font-size: 16px;
-      margin: 8px 0;
-    }
+section.active {
+  display: block;
+}
 
-    .action {
-      background: #1689ed;
-      color: white;
-      border: 0;
-      padding: 13px 18px;
-      border-radius: 8px;
-      font-size: 16px;
-      margin-top: 8px;
-    }
+.card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px #00000012;
+}
 
-    .station {
-      background: #263b56;
-      padding: 14px;
-      border-radius: 8px;
-      margin: 8px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #b9c5d3;
+  border-radius: 8px;
+  font-size: 16px;
+  margin: 8px 0;
+}
 
-    .station button {
-      background: #1689ed;
-      color: white;
-      border: 0;
-      padding: 9px;
-      border-radius: 7px;
-    }
+.action {
+  background: #1262a3;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 13px 18px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    .muted {
-      color: #b9c9dc;
-      line-height: 1.5;
-    }
+.station {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #f4f7fa;
+  padding: 13px;
+  margin-top: 9px;
+  border-radius: 8px;
+}
 
-    footer {
-      text-align: center;
-      color: #91a4bb;
-      padding: 25px;
-    }
-  </style>
+.station button {
+  border: 0;
+  background: #e1ebf5;
+  color: #123d68;
+  padding: 9px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.muted {
+  color: #65758a;
+  font-size: 13px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #65758a;
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <h1>🚆 TrainRadar24</h1>
-  <p>Deine Übersicht über den Bahnverkehr in Deutschland</p>
+  <p>Deine Zug- und Bahnhofssuche für Deutschland</p>
 </header>
 
 <nav>
-  <button class="active" onclick="showPage('start', this)">Start</button>
-  <button onclick="showPage('stations', this)">Bahnhöfe</button>
-  <button onclick="showPage('connections', this)">Verbindungen</button>
-  <button onclick="showPage('trains', this)">Züge</button>
-  <button onclick="showPage('models', this)">Zugmodelle</button>
+  <button class="active" onclick="showPage('start',this)">Start</button>
+  <button onclick="showPage('stations',this)">Bahnhöfe</button>
+  <button onclick="showPage('connections',this)">Verbindungen</button>
+  <button onclick="showPage('trains',this)">Züge</button>
+  <button onclick="showPage('models',this)">Zugmodelle</button>
 </nav>
 
 <main>
-  <section id="start">
-    <div class="panel">
-      <h2>Willkommen bei TrainRadar24!</h2>
-      <p class="muted">
-        Finde Bahnhöfe, entdecke Zugmodelle und baue deine persönliche
-        Bahn-Übersicht auf.
-      </p>
-    </div>
 
-    <div class="panel">
-      <h2>⭐ Deine Favoriten</h2>
-      <div id="favorites">
-        <p class="muted">Du hast noch keine Favoriten gespeichert.</p>
-      </div>
-    </div>
+<section id="start" class="active">
+  <div class="card">
+    <h2>Willkommen bei TrainRadar24!</h2>
+    <p>Finde Bahnhöfe und Haltestellen in ganz Deutschland.</p>
+  </div>
 
-    <div class="panel">
-      <h2>🚉 Bekannte Bahnhöfe</h2>
-      <div id="popular"></div>
-    </div>
-  </section>
+  <div class="card">
+    <h2>⭐ Deine Favoriten</h2>
+    <div id="favorites">Noch keine Favoriten gespeichert.</div>
+  </div>
 
-  <section id="stations" hidden>
-    <div class="panel">
-      <h2>🚉 Bahnhofssuche</h2>
-      <input id="stationSearch" placeholder="Bahnhof eingeben, z. B. München Hbf">
-      <button class="action" onclick="searchStations()">Suchen</button>
-      <div id="stationResults"></div>
-    </div>
-  </section>
+  <div class="card">
+    <h2>Beliebte Bahnhöfe</h2>
+    <div id="popular"></div>
+  </div>
+</section>
 
-  <section id="connections" hidden>
-    <div class="panel">
-      <h2>🔀 Verbindungen</h2>
-      <input placeholder="Von">
-      <input placeholder="Nach">
-      <button class="action" onclick="alert('Die Verbindungssuche wird später eingerichtet.')">
-        Verbindung suchen
-      </button>
-      <p class="muted">Die echte Fahrplanauskunft ist noch nicht angeschlossen.</p>
-    </div>
-  </section>
+<section id="stations">
+  <div class="card">
+    <h2>🔎 Bahnhof suchen</h2>
+    <p>Suche nach Bahnhöfen und Haltestellen in Deutschland.</p>
 
-  <section id="trains" hidden>
-    <div class="panel">
-      <h2>🚆 Zugsuche</h2>
-      <input id="trainSearch" placeholder="Zugnummer eingeben, z. B. ICE 100">
-      <button class="action" onclick="searchTrain()">Zug suchen</button>
-      <div id="trainResults"></div>
-    </div>
-  </section>
+    <input
+      id="stationSearch"
+      placeholder="Zum Beispiel: Aying, Berlin oder München"
+      onkeydown="if(event.key==='Enter') searchStations()"
+    >
 
-  <section id="models" hidden>
-    <div class="panel">
-      <h2>🚄 Zugmodelle</h2>
-      <div class="station">BR 420 <span>S-Bahn</span></div>
-      <div class="station">BR 423 <span>S-Bahn</span></div>
-      <div class="station">BR 430 <span>S-Bahn</span></div>
-      <div class="station">BR 403 <span>ICE 3</span></div>
-      <div class="station">BR 412 <span>ICE 4</span></div>
-      <div class="station">BR 101 <span>Lokomotive</span></div>
-      <div class="station">BR 146 <span>Lokomotive</span></div>
-    </div>
-  </section>
+    <button class="action" onclick="searchStations()">Suchen</button>
+
+    <div id="stationResults"></div>
+  </div>
+</section>
+
+<section id="connections">
+  <div class="card">
+    <h2>Verbindungen</h2>
+    <p>Die Verbindungssuche wird später mit Fahrplandaten verbunden.</p>
+  </div>
+</section>
+
+<section id="trains">
+  <div class="card">
+    <h2>Zugsuche</h2>
+    <input id="trainSearch" placeholder="Zugnummer eingeben">
+    <button class="action" onclick="searchTrain()">Suchen</button>
+    <div id="trainResults"></div>
+  </div>
+</section>
+
+<section id="models">
+  <div class="card">
+    <h2>Zugmodelle</h2>
+    <p>Hier kommen später die verschiedenen Baureihen hin.</p>
+    <p>Zum Beispiel BR 420, BR 423, BR 403 und BR 412.</p>
+  </div>
+</section>
+
 </main>
 
 <footer>
@@ -209,123 +214,188 @@
 </footer>
 
 <script>
-  const stations = [
-    "München Hbf",
-    "München Ost",
-    "München-Pasing",
-    "Höhenkirchen-Siegertsbrunn",
-    "Dürrnhaar",
-    "Holzkirchen",
-    "Rosenheim",
-    "Nürnberg Hbf",
-    "Augsburg Hbf",
-    "Stuttgart Hbf",
-    "Frankfurt(Main)Hbf",
-    "Berlin Hbf",
-    "Hamburg Hbf",
-    "Köln Hbf"
-  ];
+const DATA_URL =
+"https://services2.arcgis.com/jUpNdisbWqRpMo35/ArcGIS/rest/services/Haltestelledaten_DELFI/FeatureServer/0/query";
 
-  let favorites = [];
+let favorites = [];
 
-  function showPage(page, button) {
-    document.querySelectorAll("main section").forEach(section => {
-      section.hidden = true;
-    });
+function showPage(page, button) {
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.remove("active");
+  });
 
-    document.getElementById(page).hidden = false;
+  document.getElementById(page).classList.add("active");
 
-    document.querySelectorAll("nav button").forEach(btn => {
-      btn.classList.remove("active");
-    });
+  document.querySelectorAll("nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
 
-    button.classList.add("active");
+  button.classList.add("active");
+}
+
+async function searchStations() {
+  const input = document.getElementById("stationSearch");
+  const results = document.getElementById("stationResults");
+  const query = input.value.trim();
+
+  results.textContent = "";
+
+  if (query.length < 2) {
+    results.textContent = "Bitte mindestens zwei Buchstaben eingeben.";
+    return;
   }
 
-  function searchStations() {
-    const query = document.getElementById("stationSearch")
-      .value.trim().toLowerCase();
+  results.textContent = "🔄 Bahnhöfe werden gesucht ...";
 
-    const results = document.getElementById("stationResults");
-    results.innerHTML = "";
+  try {
+    const safeQuery = query.replace(/'/g, "''");
 
-    if (!query) {
-      results.textContent = "Bitte gib einen Bahnhof ein.";
+    const railFilter = [
+      "Verkehrsm LIKE '%Bahn%'",
+      "Verkehrsm LIKE '%Zug%'",
+      "Verkehrsm LIKE '%Fernzug%'",
+      "Verkehrsm LIKE '%Interregioverkehr%'",
+      "Verkehrsm LIKE '%Schlafwagen%'"
+    ].join(" OR ");
+
+    const params = new URLSearchParams({
+      where: "Name LIKE '%" + safeQuery + "%' AND (" + railFilter + ")",
+      outFields: "Name,Verkehrsm,Art,Gemeinde,Bundesland",
+      returnGeometry: "false",
+      orderByFields: "Name ASC",
+      resultRecordCount: "2000",
+      f: "json"
+    });
+
+    const response = await fetch(DATA_URL + "?" + params.toString());
+
+    if (!response.ok) {
+      throw new Error("Datenquelle nicht erreichbar");
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+
+    results.textContent = "";
+
+    const features = data.features || [];
+    const seen = new Set();
+    const uniqueStations = [];
+
+    features.forEach(feature => {
+      const a = feature.attributes;
+      if (!a.Name) return;
+
+      const key = a.Name.toLowerCase() + "|" +
+        (a.Gemeinde || "").toLowerCase();
+
+      if (seen.has(key)) return;
+
+      seen.add(key);
+      uniqueStations.push(a);
+    });
+
+    if (uniqueStations.length === 0) {
+      results.textContent = "Keine passende Station gefunden.";
       return;
     }
 
-    const matches = stations.filter(station =>
-      station.toLowerCase().includes(query)
-    );
+    const heading = document.createElement("p");
+    heading.className = "muted";
+    heading.textContent =
+      uniqueStations.length + " gefundene Ergebnisse";
+    results.appendChild(heading);
 
-    if (matches.length === 0) {
-      results.textContent = "Kein Bahnhof in der aktuellen Liste gefunden.";
-      return;
-    }
-
-    matches.forEach(station => {
+    uniqueStations.forEach(station => {
       const item = document.createElement("div");
       item.className = "station";
 
-      const name = document.createElement("span");
-      name.textContent = station;
+      const info = document.createElement("div");
+
+      const name = document.createElement("strong");
+      name.textContent = station.Name;
+
+      const details = document.createElement("p");
+      details.className = "muted";
+      details.textContent =
+        [station.Gemeinde, station.Bundesland, station.Verkehrsm]
+        .filter(Boolean).join(" · ");
+
+      info.append(name, details);
 
       const button = document.createElement("button");
       button.textContent = "☆ Favorit";
-      button.onclick = () => addFavorite(station);
+      button.onclick = () => addFavorite(station.Name);
 
-      item.append(name, button);
+      item.append(info, button);
       results.appendChild(item);
     });
-  }
 
-  function addFavorite(station) {
-    if (!favorites.includes(station)) {
-      favorites.push(station);
-      updateFavorites();
-    }
-  }
-
-  function updateFavorites() {
-    const area = document.getElementById("favorites");
-    area.innerHTML = "";
-
-    if (favorites.length === 0) {
-      area.textContent = "Du hast noch keine Favoriten gespeichert.";
-      return;
+    if (data.exceededTransferLimit) {
+      const note = document.createElement("p");
+      note.className = "muted";
+      note.textContent =
+        "Es gibt möglicherweise weitere Treffer. Die Anzeige ist begrenzt.";
+      results.appendChild(note);
     }
 
-    favorites.forEach(station => {
-      const item = document.createElement("div");
-      item.className = "station";
-      item.textContent = "⭐ " + station;
-      area.appendChild(item);
-    });
+  } catch (error) {
+    console.error(error);
+    results.textContent =
+      "Die Bahnhofsdaten konnten nicht geladen werden. Bitte später erneut versuchen.";
+  }
+}
+
+function addFavorite(name) {
+  if (!favorites.includes(name)) {
+    favorites.push(name);
+    updateFavorites();
+  }
+}
+
+function updateFavorites() {
+  const area = document.getElementById("favorites");
+  area.textContent = "";
+
+  if (favorites.length === 0) {
+    area.textContent = "Noch keine Favoriten gespeichert.";
+    return;
   }
 
-  function searchTrain() {
-    const number = document.getElementById("trainSearch").value.trim();
-    const result = document.getElementById("trainResults");
-
-    result.textContent = number
-      ? "Die Suche nach " + number + " wird später mit echten Zugdaten verbunden."
-      : "Bitte gib eine Zugnummer ein.";
-  }
-
-  const popularStations = [
-    "München Hbf",
-    "Berlin Hbf",
-    "Hamburg Hbf",
-    "Köln Hbf",
-    "Frankfurt(Main)Hbf"
-  ];
-
-  popularStations.forEach(station => {
+  favorites.forEach(name => {
     const item = document.createElement("div");
     item.className = "station";
-    item.textContent = station;
-    document.getElementById("popular").appendChild(item);
+    item.textContent = "⭐ " + name;
+    area.appendChild(item);
   });
+}
+
+function searchTrain() {
+  const number = document.getElementById("trainSearch").value.trim();
+  const result = document.getElementById("trainResults");
+
+  result.textContent = number
+    ? "Die Suche nach " + number + " wird später mit echten Zugdaten verbunden."
+    : "Bitte eine Zugnummer eingeben.";
+}
+
+const popularStations = [
+  "München Hbf",
+  "Berlin Hbf",
+  "Hamburg Hbf",
+  "Köln Hbf",
+  "Frankfurt(Main)Hbf"
+];
+
+popularStations.forEach(name => {
+  const item = document.createElement("div");
+  item.className = "station";
+  item.textContent = "🚉 " + name;
+  document.getElementById("popular").appendChild(item);
+});
 </script>
 
 </body>
