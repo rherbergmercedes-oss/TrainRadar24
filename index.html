@@ -397,7 +397,232 @@ popularStations.forEach(name => {
   document.getElementById("popular").appendChild(item);
 });
 
-const TRANSITOUS_API = "https://api.transitous.org/api/v1";
+
+const TRANSITOUS_API = "https://api.transitous.org/api";
+
+let favorites = [];
+
+function showPage(page, button) {
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  document.getElementById(page).classList.add("active");
+
+  document.querySelectorAll("nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  button.classList.add("active");
+}
+
+async function searchStations() {
+  const query = document.getElementById("stationSearch").value.trim();
+  const results = document.getElementById("stationResults");
+
+  results.textContent = "";
+
+  if (query.length < 2) {
+    results.textContent = "Bitte mindestens zwei Buchstaben eingeben.";
+    return;
+  }
+
+  results.textContent = "Bahnhöfe werden gesucht ...";
+
+  try {
+    const url = TRANSITOUS_API + "/v1/geocode?" +
+      new URLSearchParams({
+        text: query,
+        type: "STOP",
+        language: "de"
+      });
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Suche fehlgeschlagen");
+
+    const data = await response.json();
+
+    const places = Array.isArray(data)
+      ? data
+      : data.places || data.locations || data.results || [];
+
+    results.textContent = "";
+
+    if (places.length === 0) {
+      results.textContent = "Keine Station gefunden.";
+      return;
+    }
+
+    places.forEach(place => {
+      const id = place.id || place.stopId;
+      const name = place.name || place.label;
+
+      if (!id || !name) return;
+
+      const item = document.createElement("div");
+      item.className = "station";
+
+      const info = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = name;
+
+      const hint = document.createElement("p");
+      hint.className = "muted";
+      hint.textContent = "Bahnhof öffnen";
+
+      info.append(title, hint);
+
+      const button = document.createElement("button");
+      button.textContent = "Öffnen";
+      button.onclick = () => openStation(id, name);
+
+      item.append(info, button);
+      results.appendChild(item);
+    });
+
+  } catch (error) {
+    console.error(error);
+    results.textContent =
+      "Bahnhofssuche momentan nicht erreichbar.";
+  }
+}
+
+async function openStation(stopId, name) {
+  const results = document.getElementById("stationResults");
+
+  results.innerHTML = "";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "🚉 " + name;
+  results.appendChild(heading);
+
+  const back = document.createElement("button");
+  back.className = "action";
+  back.textContent = "← Zurück zur Suche";
+  back.onclick = () => searchStations();
+  results.appendChild(back);
+
+  const title = document.createElement("h3");
+  title.textContent = "🚆 Nächste Abfahrten";
+  results.appendChild(title);
+
+  const loading = document.createElement("p");
+  loading.textContent = "Fahrten werden geladen ...";
+  results.appendChild(loading);
+
+  try {
+    const url = TRANSITOUS_API + "/v6/stoptimes?" +
+      new URLSearchParams({
+        stopId: stopId,
+        n: "10",
+        language: "de"
+      });
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Fahrplan nicht erreichbar");
+
+    const data = await response.json();
+
+    loading.remove();
+
+    const times = data.stopTimes || [];
+
+    if (times.length === 0) {
+      const message = document.createElement("p");
+      message.textContent = "Keine Abfahrten verfügbar.";
+      results.appendChild(message);
+      return;
+    }
+
+    times.forEach(stopTime => {
+      const item = document.createElement("div");
+      item.className = "station";
+
+      const info = document.createElement("div");
+
+      const trip = stopTime.trip || {};
+      const line = document.createElement("strong");
+      line.textContent =
+        trip.routeShortName ||
+        trip.displayName ||
+        trip.id ||
+        "Zug";
+
+      const destination = document.createElement("p");
+      destination.className = "muted";
+      destination.textContent =
+        stopTime.place?.name ||
+        trip.destination ||
+        "Fahrziel siehe Zugdetails";
+
+      const time = document.createElement("p");
+      time.textContent =
+        stopTime.departure
+          ? new Date(stopTime.departure).toLocaleTimeString("de-DE", {
+              hour: "2-digit",
+              minute: "2-digit"
+            })
+          : "Zeit nicht verfügbar";
+
+      info.append(line, destination, time);
+      item.appendChild(info);
+      results.appendChild(item);
+    });
+
+  } catch (error) {
+    console.error(error);
+    loading.textContent =
+      "Die Abfahrten konnten nicht geladen werden.";
+  }
+}
+
+function addFavorite(name) {
+  if (!favorites.includes(name)) {
+    favorites.push(name);
+    updateFavorites();
+  }
+}
+
+function updateFavorites() {
+  const area = document.getElementById("favorites");
+  area.textContent = "";
+
+  if (favorites.length === 0) {
+    area.textContent = "Noch keine Favoriten gespeichert.";
+    return;
+  }
+
+  favorites.forEach(name => {
+    const item = document.createElement("div");
+    item.className = "station";
+    item.textContent = "⭐ " + name;
+    area.appendChild(item);
+  });
+}
+
+function searchTrain() {
+  const number = document.getElementById("trainSearch").value.trim();
+  document.getElementById("trainResults").textContent =
+    number
+      ? "Zugsuche für " + number + " kommt später."
+      : "Bitte eine Zugnummer eingeben.";
+}
+
+const popularStations = [
+  "München Hbf",
+  "Berlin Hbf",
+  "Hamburg Hbf",
+  "Köln Hbf",
+  "Frankfurt(Main)Hbf"
+];
+
+popularStations.forEach(name => {
+  const item = document.createElement("div");
+  item.className = "station";
+  item.textContent = "🚉 " + name;
+  document.getElementById("popular").appendChild(item);
+});
+
 </script>
 
 </body>
