@@ -1,16 +1,333 @@
-DOCTYPE html>
-<html lang="de">
-async function searchStations(inputId, resultId) {
-  const query = document.getElementById(inputId).value.trim();
-  const area = document.getElementById(resultId);
 
-  if (query.length < 2) {
-    area.innerHTML = '<p class="empty">Mindestens 2 Buchstaben eingeben.</p>';
-    return;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrainRadar24</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: white;
+    }
+
+    header {
+      background: #17263b;
+      padding: 22px;
+      text-align: center;
+      border-bottom: 3px solid #36a3ff;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      color: #b9c9dc;
+      margin-bottom: 0;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      background: #0b1320;
+    }
+
+    nav button {
+      background: #263b56;
+      color: white;
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    nav button.active {
+      background: #1689ed;
+    }
+
+    main {
+      max-width: 850px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .panel {
+      background: #1b2a40;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .action {
+      background: #1689ed;
+      color: white;
+      border: 0;
+      padding: 13px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .station {
+      background: #263b56;
+      padding: 14px;
+      border-radius: 8px;
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .station button {
+      background: #1689ed;
+      color: white;
+      border: 0;
+      padding: 9px;
+      border-radius: 7px;
+    }
+
+    .muted {
+      color: #b9c9dc;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      color: #91a4bb;
+      padding: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚆 TrainRadar24</h1>
+  <p>Deine Übersicht über den Bahnverkehr in Deutschland</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('start', this)">Start</button>
+  <button onclick="showPage('stations', this)">Bahnhöfe</button>
+  <button onclick="showPage('connections', this)">Verbindungen</button>
+  <button onclick="showPage('trains', this)">Züge</button>
+  <button onclick="showPage('models', this)">Zugmodelle</button>
+</nav>
+
+<main>
+  <section id="start">
+    <div class="panel">
+      <h2>Willkommen bei TrainRadar24!</h2>
+      <p class="muted">
+        Finde Bahnhöfe, entdecke Zugmodelle und baue deine persönliche
+        Bahn-Übersicht auf.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>⭐ Deine Favoriten</h2>
+      <div id="favorites">
+        <p class="muted">Du hast noch keine Favoriten gespeichert.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>🚉 Bekannte Bahnhöfe</h2>
+      <div id="popular"></div>
+    </div>
+  </section>
+
+  <section id="stations" hidden>
+    <div class="panel">
+      <h2>🚉 Bahnhofssuche</h2>
+      <input id="stationSearch" placeholder="Bahnhof eingeben, z. B. München Hbf">
+      <button class="action" onclick="searchStations()">Suchen</button>
+      <div id="stationResults"></div>
+    </div>
+  </section>
+
+  <section id="connections" hidden>
+    <div class="panel">
+      <h2>🔀 Verbindungen</h2>
+      <input placeholder="Von">
+      <input placeholder="Nach">
+      <button class="action" onclick="alert('Die Verbindungssuche wird später eingerichtet.')">
+        Verbindung suchen
+      </button>
+      <p class="muted">Die echte Fahrplanauskunft ist noch nicht angeschlossen.</p>
+    </div>
+  </section>
+
+  <section id="trains" hidden>
+    <div class="panel">
+      <h2>🚆 Zugsuche</h2>
+      <input id="trainSearch" placeholder="Zugnummer eingeben, z. B. ICE 100">
+      <button class="action" onclick="searchTrain()">Zug suchen</button>
+      <div id="trainResults"></div>
+    </div>
+  </section>
+
+  <section id="models" hidden>
+    <div class="panel">
+      <h2>🚄 Zugmodelle</h2>
+      <div class="station">BR 420 <span>S-Bahn</span></div>
+      <div class="station">BR 423 <span>S-Bahn</span></div>
+      <div class="station">BR 430 <span>S-Bahn</span></div>
+      <div class="station">BR 403 <span>ICE 3</span></div>
+      <div class="station">BR 412 <span>ICE 4</span></div>
+      <div class="station">BR 101 <span>Lokomotive</span></div>
+      <div class="station">BR 146 <span>Lokomotive</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  TrainRadar24 · Deutschland
+</footer>
+
+<script>
+  const stations = [
+    "München Hbf",
+    "München Ost",
+    "München-Pasing",
+    "Höhenkirchen-Siegertsbrunn",
+    "Dürrnhaar",
+    "Holzkirchen",
+    "Rosenheim",
+    "Nürnberg Hbf",
+    "Augsburg Hbf",
+    "Stuttgart Hbf",
+    "Frankfurt(Main)Hbf",
+    "Berlin Hbf",
+    "Hamburg Hbf",
+    "Köln Hbf"
+  ];
+
+  let favorites = [];
+
+  function showPage(page, button) {
+    document.querySelectorAll("main section").forEach(section => {
+      section.hidden = true;
+    });
+
+    document.getElementById(page).hidden = false;
+
+    document.querySelectorAll("nav button").forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
   }
 
-  area.innerHTML = '<p class="empty">Suche deutsche Bahnhöfe...</p>';
+  function searchStations() {
+    const query = document.getElementById("stationSearch")
+      .value.trim().toLowerCase();
 
-  const where =
-    "Name LIKE '%" + query.replace(/'/g, "''") +
-    "%' AND (Verkehrsm LI
+    const results = document.getElementById("stationResults");
+    results.innerHTML = "";
+
+    if (!query) {
+      results.textContent = "Bitte gib einen Bahnhof ein.";
+      return;
+    }
+
+    const matches = stations.filter(station =>
+      station.toLowerCase().includes(query)
+    );
+
+    if (matches.length === 0) {
+      results.textContent = "Kein Bahnhof in der aktuellen Liste gefunden.";
+      return;
+    }
+
+    matches.forEach(station => {
+      const item = document.createElement("div");
+      item.className = "station";
+
+      const name = document.createElement("span");
+      name.textContent = station;
+
+      const button = document.createElement("button");
+      button.textContent = "☆ Favorit";
+      button.onclick = () => addFavorite(station);
+
+      item.append(name, button);
+      results.appendChild(item);
+    });
+  }
+
+  function addFavorite(station) {
+    if (!favorites.includes(station)) {
+      favorites.push(station);
+      updateFavorites();
+    }
+  }
+
+  function updateFavorites() {
+    const area = document.getElementById("favorites");
+    area.innerHTML = "";
+
+    if (favorites.length === 0) {
+      area.textContent = "Du hast noch keine Favoriten gespeichert.";
+      return;
+    }
+
+    favorites.forEach(station => {
+      const item = document.createElement("div");
+      item.className = "station";
+      item.textContent = "⭐ " + station;
+      area.appendChild(item);
+    });
+  }
+
+  function searchTrain() {
+    const number = document.getElementById("trainSearch").value.trim();
+    const result = document.getElementById("trainResults");
+
+    result.textContent = number
+      ? "Die Suche nach " + number + " wird später mit echten Zugdaten verbunden."
+      : "Bitte gib eine Zugnummer ein.";
+  }
+
+  const popularStations = [
+    "München Hbf",
+    "Berlin Hbf",
+    "Hamburg Hbf",
+    "Köln Hbf",
+    "Frankfurt(Main)Hbf"
+  ];
+
+  popularStations.forEach(station => {
+    const item = document.createElement("div");
+    item.className = "station";
+    item.textContent = station;
+    document.getElementById("popular").appendChild(item);
+  });
+</script>
+
+</body>
+</html>
