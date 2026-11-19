@@ -7,117 +7,133 @@
 <title>TrainRadar24</title>
 
 <style>
-:root {
-  --blue: #1675c5;
-  --bg: #f2f5f8;
-  --card: #ffffff;
-  --text: #172536;
-  --muted: #718096;
-}
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
   font-family: Arial, sans-serif;
-}
-header {
-  background: #1269b1;
+  background: #101827;
   color: white;
-  padding: 22px 18px;
 }
-header h1 {
-  margin: 0;
+
+header {
+  background: #17243a;
+  padding: 20px;
+  border-bottom: 2px solid #263b5c;
+}
+
+.logo {
   font-size: 27px;
+  font-weight: bold;
+  color: #55aaff;
 }
-header p {
-  margin: 6px 0 0;
-  opacity: .85;
-}
+
+.logo span { color: white; }
+
 nav {
   display: flex;
-  overflow-x: auto;
-  background: white;
-  border-bottom: 1px solid #ddd;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
 }
+
 nav button {
+  background: #263750;
+  color: white;
   border: 0;
-  background: white;
-  padding: 15px;
-  white-space: nowrap;
-  font-size: 14px;
-  color: #26384b;
+  padding: 11px 15px;
+  border-radius: 8px;
+  cursor: pointer;
 }
+
 nav button.active {
-  color: var(--blue);
-  border-bottom: 3px solid var(--blue);
+  background: #1685e8;
+}
+
+main {
+  max-width: 950px;
+  margin: auto;
+  padding: 22px;
+}
+
+h1 { font-size: 28px; }
+h2 { margin-top: 28px; }
+
+.subtitle { color: #aebbd0; }
+
+input, select {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #435674;
+  background: #1c2a40;
+  color: white;
+  font-size: 16px;
+}
+
+.card {
+  background: #1b2a40;
+  border: 1px solid #30435f;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+.station-name {
+  font-size: 18px;
   font-weight: bold;
 }
-main {
-  max-width: 900px;
-  margin: auto;
-  padding: 18px;
+
+.small {
+  color: #aebbd0;
+  font-size: 14px;
+  margin-top: 6px;
 }
-h2 {
-  font-size: 20px;
-  margin: 25px 0 12px;
-}
-.search {
-  width: 100%;
-  padding: 16px;
-  border: 1px solid #d1d9e0;
-  border-radius: 12px;
-  font-size: 16px;
-  background: white;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 11px;
-}
-.station {
-  background: var(--card);
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid #e0e5eb;
+
+button.action {
+  background: #1685e8;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 7px;
   cursor: pointer;
-  text-align: left;
-  color: var(--text);
-  font-size: 15px;
+  margin-top: 10px;
 }
-.station strong {
-  display: block;
-  margin-bottom: 5px;
+
+button.secondary {
+  background: #354762;
 }
-.station small {
-  color: var(--muted);
-}
-.station:active { background: #e5f1fc; }
-.card {
-  background: white;
-  border: 1px solid #e0e5eb;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 10px;
-}
-.favorite {
-  color: #e2a500;
-  border: 0;
-  background: transparent;
-  font-size: 21px;
+
+button.favorite {
   float: right;
+  background: #354762;
+  color: white;
+  border: 0;
+  border-radius: 7px;
+  padding: 9px;
+  cursor: pointer;
 }
-.page { display: none; }
-.page.active { display: block; }
+
+.empty {
+  color: #aebbd0;
+  padding: 15px 0;
+}
+
+.result {
+  background: #203b56;
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.hidden { display: none; }
+
 footer {
   text-align: center;
-  padding: 25px;
-  color: var(--muted);
-  font-size: 12px;
-}
-@media (min-width: 650px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
+  color: #8191a8;
+  padding: 30px;
+  font-size: 13px;
 }
 </style>
 </head>
@@ -125,164 +141,366 @@ footer {
 <body>
 
 <header>
-  <h1>🚆 TrainRadar24</h1>
-  <p>Deine Informationsplattform für die Eisenbahn</p>
-</header>
+  <div class="logo">Train<span>Radar24</span></div>
+  <div class="subtitle">Deine Welt der Eisenbahn</div>
 
-<nav>
-  <button class="active" onclick="showPage('home',this)">Startseite</button>
-  <button onclick="showPage('stations',this)">Bahnhöfe</button>
-  <button onclick="showPage('connections',this)">Verbindungen</button>
-  <button onclick="showPage('trains',this)">Züge</button>
-  <button onclick="showPage('classes',this)">Baureihen</button>
-</nav>
+  <nav>
+    <button class="active" onclick="showPage('start',this)">Startseite</button>
+    <button onclick="showPage('stations',this)">Bahnhöfe</button>
+    <button onclick="showPage('connections',this)">Verbindungen</button>
+    <button onclick="showPage('trains',this)">Züge</button>
+    <button onclick="showPage('models',this)">Zugmodelle</button>
+  </nav>
+</header>
 
 <main>
 
-<section id="home" class="page active">
-  <input class="search" id="homeSearch"
-    placeholder="🔎 Bahnhof suchen..."
-    oninput="filterStations('homeSearch','homeStations')">
+<!-- STARTSEITE -->
+<section id="start">
+  <h1>Willkommen bei TrainRadar24!</h1>
+  <p class="subtitle">Finde Bahnhöfe, Verbindungen und Zugmodelle.</p>
+
+  <input id="startSearch" placeholder="Bahnhof suchen..."
+         oninput="searchStations('startSearch','startResults')">
+
+  <div id="startResults"></div>
 
   <h2>⭐ Meine Favoriten</h2>
-  <div class="grid" id="favorites"></div>
+  <div id="favorites"></div>
 
   <h2>🚉 Bekannte Hauptbahnhöfe</h2>
-  <div class="grid" id="homeStations"></div>
+  <div id="popularStations"></div>
 </section>
 
-<section id="stations" class="page">
-  <h2>Bahnhof suchen</h2>
-  <input class="search" id="stationSearch"
-    placeholder="Bahnhof eingeben..."
-    oninput="filterStations('stationSearch','allStations')">
-  <div class="grid" id="allStations"></div>
+<!-- BAHNHÖFE -->
+<section id="stations" class="hidden">
+  <h1>Bahnhöfe</h1>
+  <p class="subtitle">Suche nach deinem Bahnhof.</p>
+
+  <input id="stationSearch" placeholder="Bahnhof eingeben..."
+         oninput="searchStations('stationSearch','stationResults')">
+
+  <div id="stationResults"></div>
 </section>
 
-<section id="connections" class="page">
-  <h2>Verbindungen</h2>
+<!-- VERBINDUNGEN -->
+<section id="connections" class="hidden">
+  <h1>Verbindungen</h1>
+  <p class="subtitle">Finde eine Zugverbindung zwischen zwei Bahnhöfen.</p>
+
   <div class="card">
-    <input class="search" placeholder="Von: Bahnhof">
-    <br><br>
-    <input class="search" placeholder="Nach: Bahnhof">
-    <br><br>
-    <button onclick="alert('Die echte Verbindungssuche wird noch angebunden.')">
+    <label>Von</label>
+    <input id="fromStation" placeholder="Startbahnhof">
+
+    <label>Nach</label>
+    <input id="toStation" placeholder="Zielbahnhof">
+
+    <label>Reisedatum</label>
+    <input id="travelDate" type="date">
+
+    <button class="action" onclick="searchConnection()">
       Verbindung suchen
     </button>
   </div>
+
+  <div id="connectionResult"></div>
 </section>
 
-<section id="trains" class="page">
-  <h2>Zugsuche</h2>
-  <input class="search" placeholder="Zugnummer eingeben...">
-  <p>Hier erscheint später die Suche nach echten Zugnummern und Zugläufen.</p>
-</section>
+<!-- ZÜGE -->
+<section id="trains" class="hidden">
+  <h1>Züge</h1>
+  <p class="subtitle">Hier wird später die Suche nach Zugnummern möglich sein.</p>
 
-<section id="classes" class="page">
-  <h2>Baureihen</h2>
-  <input class="search" placeholder="Baureihe suchen...">
-  <p>Hier entsteht unsere deutsche Zugdatenbank.</p>
-</section>
-
-<section id="stationDetails" class="page">
-  <button onclick="showPage('home')">← Zurück</button>
-  <h2 id="stationTitle"></h2>
   <div class="card">
-    <p>Abfahrten und Ankünfte für diesen Bahnhof werden hier angezeigt.</p>
-    <p><strong>Fahrplandaten:</strong> Noch nicht angebunden</p>
+    <h3>🔎 Zug suchen</h3>
+    <input id="trainNumber" placeholder="Zum Beispiel ICE 515">
+    <button class="action" onclick="searchTrain()">Suchen</button>
+    <div id="trainResult"></div>
+  </div>
+</section>
+
+<!-- ZUGMODELLE -->
+<section id="models" class="hidden">
+  <h1>Zugmodelle</h1>
+  <p class="subtitle">Entdecke verschiedene Baureihen und Zugtypen.</p>
+
+  <input id="modelSearch" placeholder="Zugmodell suchen..."
+         oninput="filterModels()">
+
+  <div id="modelResults"></div>
+</section>
+
+<!-- BAHNHOFSDETAIL -->
+<section id="stationDetail" class="hidden">
+  <button class="action secondary" onclick="showPage('stations')">
+    ← Zurück
+  </button>
+
+  <h1 id="detailTitle"></h1>
+  <p class="subtitle">Bahnhofsinformationen</p>
+
+  <div class="card">
+    <h3>Abfahrten und Ankünfte</h3>
+    <p class="small">
+      Echte Fahrplandaten sind noch nicht angebunden.
+    </p>
   </div>
 </section>
 
 </main>
 
 <footer>
-  TrainRadar24 · Unabhängiges Bahnprojekt
+  TrainRadar24 · Dein Zugportal
 </footer>
 
 <script>
 const stations = [
-  ["Berlin Hbf","Berlin"],
-  ["Hamburg Hbf","Hamburg"],
-  ["München Hbf","Bayern"],
-  ["Frankfurt (Main) Hbf","Hessen"],
-  ["Köln Hbf","Nordrhein-Westfalen"],
-  ["Stuttgart Hbf","Baden-Württemberg"],
-  ["Düsseldorf Hbf","Nordrhein-Westfalen"],
-  ["Leipzig Hbf","Sachsen"],
-  ["Dresden Hbf","Sachsen"],
-  ["Hannover Hbf","Niedersachsen"],
-  ["Nürnberg Hbf","Bayern"],
-  ["Dortmund Hbf","Nordrhein-Westfalen"],
-  ["Essen Hbf","Nordrhein-Westfalen"],
-  ["Bremen Hbf","Bremen"],
-  ["München Ost","Bayern"],
-  ["Höhenkirchen-Siegertsbrunn","Bayern"],
-  ["Holzkirchen","Bayern"]
+  "Berlin Hbf",
+  "Hamburg Hbf",
+  "München Hbf",
+  "Frankfurt (Main) Hbf",
+  "Köln Hbf",
+  "Stuttgart Hbf",
+  "Düsseldorf Hbf",
+  "Leipzig Hbf",
+  "Dresden Hbf",
+  "Hannover Hbf",
+  "Nürnberg Hbf",
+  "Dortmund Hbf",
+  "Essen Hbf",
+  "Bremen Hbf",
+  "München Ost",
+  "Höhenkirchen-Siegertsbrunn",
+  "Holzkirchen"
 ];
 
+// Neue Favoritenliste: zunächst leer
 let favorites = JSON.parse(
-  localStorage.getItem("trainFavorites") || '["München Hbf","München Ost"]'
+  localStorage.getItem("tr24-favorites-v2") || "[]"
 );
 
-function showPage(id,button) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+const models = [
+  {
+    name: "BR 420",
+    type: "S-Bahn",
+    manufacturer: "MAN, MBB und weitere",
+    description: "Elektrischer Triebzug, bekannt aus dem Münchner S-Bahn-Netz."
+  },
+  {
+    name: "BR 423",
+    type: "S-Bahn",
+    manufacturer: "Alstom",
+    description: "Elektrischer S-Bahn-Triebzug, unter anderem in München."
+  },
+  {
+    name: "BR 430",
+    type: "S-Bahn",
+    manufacturer: "Bombardier",
+    description: "Moderner elektrischer S-Bahn-Triebzug."
+  },
+  {
+    name: "BR 442",
+    type: "Regionalverkehr",
+    manufacturer: "Bombardier",
+    description: "Auch als Talent 2 bekannt."
+  },
+  {
+    name: "ICE 3",
+    type: "Fernverkehr",
+    manufacturer: "Siemens",
+    description: "Hochgeschwindigkeitszug der Deutschen Bahn."
+  },
+  {
+    name: "ICE 4",
+    type: "Fernverkehr",
+    manufacturer: "Siemens",
+    description: "Fernverkehrszug der Deutschen Bahn."
+  },
+  {
+    name: "ICE 1",
+    type: "Fernverkehr",
+    manufacturer: "Konsortium mehrerer Hersteller",
+    description: "Die erste ICE-Generation."
+  },
+  {
+    name: "BR 101",
+    type: "Elektrolokomotive",
+    manufacturer: "Adtranz",
+    description: "Elektrolokomotive im deutschen Fernverkehr."
+  },
+  {
+    name: "BR 146",
+    type: "Elektrolokomotive",
+    manufacturer: "Bombardier",
+    description: "Lokomotive für den Regionalverkehr."
+  }
+];
 
-  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-  if(button) button.classList.add("active");
+function showPage(page, button) {
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.add("hidden");
+  });
+
+  document.getElementById(page).classList.remove("hidden");
+
+  document.querySelectorAll("nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  if (button) button.classList.add("active");
+
+  if (page === "start") renderStart();
+  if (page === "stations") {
+    searchStations("stationSearch", "stationResults");
+  }
+  if (page === "models") filterModels();
 }
 
-function stationCard(station) {
-  const name = station[0];
+function renderStart() {
+  renderFavorites();
+
+  const popular = [
+    "Berlin Hbf",
+    "Hamburg Hbf",
+    "München Hbf",
+    "Frankfurt (Main) Hbf",
+    "Köln Hbf",
+    "Stuttgart Hbf"
+  ];
+
+  document.getElementById("popularStations").innerHTML =
+    popular.map(name => stationCard(name)).join("");
+}
+
+function stationCard(name) {
   const isFavorite = favorites.includes(name);
+
   return `
-    <div class="station" onclick="openStation('${name.replace(/'/g,"\\'")}')">
-      <button class="favorite" onclick="event.stopPropagation();toggleFavorite('${name.replace(/'/g,"\\'")}')">
-        ${isFavorite ? "★" : "☆"}
+    <div class="card">
+      <button class="favorite" onclick="toggleFavorite('${name}')">
+        ${isFavorite ? "⭐" : "☆"}
       </button>
-      <strong>${name}</strong>
-      <small>${station[1]}</small>
-    </div>`;
+      <div class="station-name">${name}</div>
+      <button class="action" onclick="openStation('${name}')">
+        Bahnhof öffnen
+      </button>
+    </div>
+  `;
 }
 
-function renderStations() {
-  document.getElementById("homeStations").innerHTML =
-    stations.slice(0,15).map(stationCard).join("");
+function searchStations(inputId, resultId) {
+  const query = document.getElementById(inputId).value.toLowerCase();
 
-  document.getElementById("allStations").innerHTML =
-    stations.map(stationCard).join("");
+  const matches = stations.filter(name =>
+    name.toLowerCase().includes(query)
+  );
 
-  document.getElementById("favorites").innerHTML =
-    stations.filter(s => favorites.includes(s[0]))
-      .map(stationCard).join("") || "<p>Noch keine Favoriten.</p>";
+  document.getElementById(resultId).innerHTML =
+    matches.length
+      ? matches.map(name => stationCard(name)).join("")
+      : '<p class="empty">Kein Bahnhof gefunden.</p>';
 }
 
 function toggleFavorite(name) {
-  favorites = favorites.includes(name)
-    ? favorites.filter(f => f !== name)
-    : [...favorites,name];
+  if (favorites.includes(name)) {
+    favorites = favorites.filter(item => item !== name);
+  } else {
+    favorites.push(name);
+  }
 
-  localStorage.setItem("trainFavorites",JSON.stringify(favorites));
-  renderStations();
+  localStorage.setItem(
+    "tr24-favorites-v2",
+    JSON.stringify(favorites)
+  );
+
+  renderStart();
+  searchStations("stationSearch", "stationResults");
 }
 
-function filterStations(inputId,resultId) {
-  const q = document.getElementById(inputId).value.toLowerCase();
-  const results = stations.filter(s =>
-    s[0].toLowerCase().includes(q) ||
-    s[1].toLowerCase().includes(q)
-  );
-  document.getElementById(resultId).innerHTML =
-    results.map(stationCard).join("") ||
-    "<p>Kein Bahnhof gefunden.</p>";
+function renderFavorites() {
+  const area = document.getElementById("favorites");
+
+  if (favorites.length === 0) {
+    area.innerHTML =
+      '<p class="empty">Du hast noch keine Favoriten. ' +
+      'Markiere einen Bahnhof mit ☆, um ihn hier zu speichern.</p>';
+    return;
+  }
+
+  area.innerHTML = favorites.map(name => stationCard(name)).join("");
 }
 
 function openStation(name) {
-  document.getElementById("stationTitle").textContent = name;
-  showPage("stationDetails");
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.add("hidden");
+  });
+
+  document.getElementById("stationDetail").classList.remove("hidden");
+  document.getElementById("detailTitle").textContent = name;
 }
 
-renderStations();
+function searchConnection() {
+  const from = document.getElementById("fromStation").value.trim();
+  const to = document.getElementById("toStation").value.trim();
+  const date = document.getElementById("travelDate").value;
+
+  const result = document.getElementById("connectionResult");
+
+  if (!from || !to) {
+    result.innerHTML =
+      '<p class="empty">Bitte Start- und Zielbahnhof eingeben.</p>';
+    return;
+  }
+
+  if (from.toLowerCase() === to.toLowerCase()) {
+    result.innerHTML =
+      '<p class="empty">Start und Ziel müssen unterschiedlich sein.</p>';
+    return;
+  }
+
+  result.innerHTML = `
+    <div class="result">
+      <h3>Deine Suche</h3>
+      <p><strong>${from}</strong> → <strong>${to}</strong></p>
+      <p class="small">Datum: ${date || "Nicht angegeben"}</p>
+      <p class="small">
+        Die Suche wurde vorbereitet. Echte Verbindungen und Abfahrtszeiten
+        sind noch nicht angebunden.
+      </p>
+    </div>
+  `;
+}
+
+function searchTrain() {
+  const number = document.getElementById("trainNumber").value.trim();
+
+  document.getElementById("trainResult").innerHTML = number
+    ? `<p class="small">Suche nach ${number}: Zugdaten sind noch nicht angebunden.</p>`
+    : '<p class="small">Bitte eine Zugnummer eingeben.</p>';
+}
+
+function filterModels() {
+  const query = document.getElementById("modelSearch").value.toLowerCase();
+
+  const matches = models.filter(model =>
+    (model.name + " " + model.type + " " + model.manufacturer)
+      .toLowerCase().includes(query)
+  );
+
+  document.getElementById("modelResults").innerHTML =
+    matches.length
+      ? matches.map(model => `
+        <div class="card">
+          <div class="station-name">${model.name}</div>
+          <div class="small">${model.type}</div>
+          <p>${model.description}</p>
+          <p class="small">Hersteller: ${model.manufacturer}</p>
+        </div>
+      `).join("")
+      : '<p class="empty">Kein Zugmodell gefunden.</p>';
+}
+
+renderStart();
 </script>
 
 </body>
